@@ -1,0 +1,43 @@
+service:
+  name: serverless-demo
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'eu-west-1'}
+  devStages:
+    - dev
+    - test
+  prodStages:
+    - staging
+    - production
+
+# Add the serverless-webpack plugin
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: ${self:custom.stage}
+  region: ${self:custom.region}
+  environment:
+    stage: ${self:custom.stage}
+    region: ${self:custom.region}
+    devStages: ${self:custom.devStages}
+    prodStages: ${self:custom.prodStages}
+
+functions:
+  echo:
+    handler: src/functions/handler.echo
+    events:
+      - http:
+          method: post
+          path: echo/{pathToEcho}
+
+  error:
+    handler: src/functions/handler.error
+    events:
+      - http:
+          method: get
+          path: error

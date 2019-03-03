@@ -1,0 +1,8 @@
+# Sensitive data, do not commit to version control
+
+vpc:
+  securityGroupIds:
+    - secu-group-id
+  subnetIds:
+    - subnet-id
+

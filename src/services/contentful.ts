@@ -21,7 +21,7 @@ export const contentfulClient = createClient(config.contentful)
 
 export const fetchMainPage = <T extends keyof MainPageIdMap>(pageName: T): Promise<Entry<MainPageFields>> => {
   if (!mainPageIdMap.hasOwnProperty(pageName)) {
-    throw new createError[404]()
+    throw new createError.NotFound()
   }
   return contentfulClient.getEntry(mainPageIdMap[pageName])
 }

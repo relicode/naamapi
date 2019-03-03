@@ -9,7 +9,7 @@ export const middify = (handler: APIGatewayProxyHandler): Middy<APIGatewayProxyE
   const middified = middy(handler)
     .use(jsonBodyParser())      // parses the request body when it's a JSON and converts it to an object
     .use(httpErrorHandler())    // handles common http errors and returns proper responses
-    .use(httpEventNormalizer()) // makes sure that an object for queryStringParameters and pathParameters is always available
+    .use(httpEventNormalizer()) // queryStringParameters and pathParameters always available
   if (['staging', 'production'].includes(stage)) {
     middified.use(httpSecurityHeaders())  // Applies best practice security headers to responses.
   }

@@ -10,8 +10,12 @@
     "moduleResolution": "node",
     "baseUrl": "./",
     "paths": {
+      "@src/*": ["src/*"],
       "@utils/*": ["src/utils/*"]
     },
+    "plugins": [
+      { "name": "typescript-tslint-plugin" }
+    ],
     "types": [
       "webpack-env",
       "node",

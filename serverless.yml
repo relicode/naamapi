@@ -37,3 +37,9 @@ functions:
           method: get
           path: error
 
+  kiltis:
+    handler: src/functions/content.kiltis
+    events:
+      - http:
+          method: get
+          path: kiltis

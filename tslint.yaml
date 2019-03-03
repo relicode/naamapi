@@ -4,4 +4,5 @@
     ordered-imports: false
     quotemark: [true, single, jsx-double]
     semicolon: [true, never]
+    interface-name: [true, never-prefix]
 

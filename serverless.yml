@@ -23,23 +23,10 @@ provider:
     region: ${self:custom.region}
 
 functions:
-  echo:
-    handler: src/functions/handler.echo
-    events:
-      - http:
-          method: post
-          path: echo/{pathToEcho}
-
-  error:
-    handler: src/functions/handler.error
+  mainPage:
+    handler: src/functions/content.mainPage
     events:
       - http:
           method: get
-          path: error
+          path: main-page/{pageName}
 
-  kiltis:
-    handler: src/functions/content.kiltis
-    events:
-      - http:
-          method: get
-          path: kiltis

@@ -1,16 +1,16 @@
 import { APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
-import contentful from 'contentful'
-import createError from 'http-errors'
-import { contentfulClient } from '@utils/contentful'
+import { fetchMainPage } from '@services/contentful'
 import Logger from '@utils/logger'
 import { middify } from '@utils/middy'
 
-const { log } = new Logger('handler')
+const { log } = new Logger('mainPage')
 
-const kiltisHandler: APIGatewayProxyHandler = async (event, context) => {
-  const content = await contentfulClient.getEntry('741pLXPdPs4LvlulI3xOck')
-  log(content)
-  return { statusCode: 200, body: JSON.stringify(content) }
+const mainPageHandler: APIGatewayProxyHandler = async (event, context) => {
+  const { pageName } = event.pathParameters
+  const page = await fetchMainPage(pageName as any)
+  const { fields } = page
+  log(`Successfully fetched page: ${fields.title}`)
+  return { statusCode: 200, body: JSON.stringify(fields) }
 }
 
-export const kiltis = middify(kiltisHandler)
+export const mainPage = middify(mainPageHandler)

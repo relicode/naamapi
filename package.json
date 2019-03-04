@@ -9,10 +9,12 @@
   "dependencies": {
     "aws-sdk": "^2.409.0",
     "contentful": "^7.3.0",
+    "dotenv": "^6.2.0",
     "middy": "^0.22.1"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.1",
+    "@types/dotenv": "^6.1.0",
     "@types/jest": "^24.0.6",
     "@types/node": "^8.0.57",
     "@types/webpack-env": "^1.13.7",

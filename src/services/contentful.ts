@@ -1,7 +1,7 @@
 import { createClient } from 'contentful'
 import { Entry } from 'contentful'
 import createError from 'http-errors'
-import config from '@utils/config'
+import { contentful as contentfulConfig } from '@utils/config'
 
 interface MainPageFields {
   title: string,
@@ -17,7 +17,7 @@ const mainPageIdMap: MainPageIdMap = {
   kiltis: '741pLXPdPs4LvlulI3xOck',
 }
 
-export const contentfulClient = createClient(config.contentful)
+export const contentfulClient = createClient(contentfulConfig)
 
 export const fetchMainPage = <T extends keyof MainPageIdMap>(pageName: T): Promise<Entry<MainPageFields>> => {
   if (!mainPageIdMap.hasOwnProperty(pageName)) {

@@ -13,7 +13,9 @@ interface MainPageFields {
 }
 
 interface TrimmedMainPage extends MainPageFields {
+  createdAt: string,
   headerImage: string,
+  updatedAt: string,
 }
 
 interface MainPageIdMap {
@@ -27,12 +29,15 @@ const mainPageIdMap: MainPageIdMap = {
 export const contentfulClient = createClient(contentfulConfig)
 
 const trimMainPage = (entry: Entry<MainPageFields>): TrimmedMainPage => {
+  const { createdAt, updatedAt } = entry.sys
   const { headerImage, title, content } = entry.fields
   const { url } = headerImage.fields.file
   return {
+    createdAt,
     content,
     headerImage: url,
     title,
+    updatedAt,
   }
 }
 

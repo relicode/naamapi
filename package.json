@@ -9,8 +9,8 @@
   "dependencies": {
     "aws-sdk": "^2.409.0",
     "contentful": "^7.3.0",
-    "dotenv": "^6.2.0",
-    "middy": "^0.22.1"
+    "middy": "^0.22.1",
+    "serverless-dotenv-plugin": "^2.0.1"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.1",

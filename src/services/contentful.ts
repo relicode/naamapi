@@ -33,8 +33,8 @@ const trimMainPage = (entry: Entry<MainPageFields>): TrimmedMainPage => {
   const { headerImage, title, content } = entry.fields
   const { url } = headerImage.fields.file
   return {
-    createdAt,
     content,
+    createdAt,
     headerImage: url,
     title,
     updatedAt,

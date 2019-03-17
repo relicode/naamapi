@@ -1,8 +1,20 @@
 ---
   extends: "tslint:recommended"
+  rulesDirectory: node_modules/tslint-eslint-rules/dist/rules
   rules:
+    arrow-parens: true
+    interface-name: [true, never-prefix]
+    no-constant-condition: true
+    object-curly-spacing: [true, always]
+    object-literal-sort-keys: false
     ordered-imports: false
     quotemark: [true, single, jsx-double]
     semicolon: [true, never]
-    interface-name: [true, never-prefix]
+    whitespace:
+      - true
+      - check-branch
+      - check-decl
+      - check-operator
+      - check-module
+      - check-rest-spread
 

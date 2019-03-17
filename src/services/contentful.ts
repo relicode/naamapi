@@ -1,20 +1,21 @@
-import { createClient } from 'contentful'
-import { Entry } from 'contentful'
-import createError from 'http-errors'
 import { contentful as contentfulConfig } from '@utils/config'
 import Logger from '@utils/logger'
+import { createClient } from 'contentful'
+import { Entry, Field } from 'contentful'
+import createError from 'http-errors'
 
 const { log } = new Logger('services/contentful')
 
 interface MainPageFields {
-  title: string,
-  headerImage: any,
   content: string,
+  headerImage: any
+  order: number,
+  title: string,
 }
 
 interface TrimmedMainPage extends MainPageFields {
   createdAt: string,
-  headerImage: string,
+  headerImageUrl: string,
   updatedAt: string,
 }
 
@@ -30,12 +31,15 @@ export const contentfulClient = createClient(contentfulConfig)
 
 const trimMainPage = (entry: Entry<MainPageFields>): TrimmedMainPage => {
   const { createdAt, updatedAt } = entry.sys
-  const { headerImage, title, content } = entry.fields
-  const { url } = headerImage.fields.file
+  const { headerImage, title, content, order } = entry.fields
+  const headerImageUrl: string = headerImage.fields.file
+
   return {
     content,
     createdAt,
-    headerImage: url,
+    headerImage,
+    headerImageUrl,
+    order,
     title,
     updatedAt,
   }

@@ -49,7 +49,7 @@ export default class Logger {
   }
 
   private sanitizeMessage(message: Array<string | object>): string {
-    return message.map(m => (
+    return message.map((m) => (
       typeof m === 'string' ? m : JSON.stringify(m, null, 2)
     )).join('\n')
   }

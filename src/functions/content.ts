@@ -1,16 +1,15 @@
-import { APIGatewayProxyHandler } from 'aws-lambda'
-import { fetchMainPage } from '@services/contentful'
+import { fetchMainInfoPages } from '@services/contentful'
 import { createErrorResponse } from '@utils/lambda'
-import { middify } from '@utils/middy'
+import middify from '@utils/middy'
+import { APIGatewayProxyHandler } from 'aws-lambda'
 
-const mainPageHandler: APIGatewayProxyHandler = async (event) => {
+const mainPageHandler: APIGatewayProxyHandler = async () => {
   try {
-    const { pageName } = event.pathParameters
-    const page = await fetchMainPage(pageName as any)
+    const page = await fetchMainInfoPages()
     return { statusCode: 200, body: JSON.stringify(page) }
   } catch (e) {
     return createErrorResponse(e)
   }
 }
 
-export const mainPage = middify(mainPageHandler)
+export const mainInfoPages = middify(mainPageHandler)

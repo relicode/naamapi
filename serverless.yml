@@ -25,9 +25,9 @@ provider:
 
 functions:
   mainPage:
-    handler: src/functions/content.mainPage
+    handler: src/functions/content.mainInfoPages
     events:
       - http:
           method: get
-          path: main-page/{pageName}
+          path: main-pages/
 

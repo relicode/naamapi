@@ -6,7 +6,7 @@ import middy, { Middy } from 'middy'
 const { httpSecurityHeaders, httpEventNormalizer, jsonBodyParser } = require('middy/middlewares')
 const { stage } = process.env
 
-export const middify = (handler: APIGatewayProxyHandler): Middy<APIGatewayProxyEvent, APIGatewayProxyResult> => {
+export default (handler: APIGatewayProxyHandler): Middy<APIGatewayProxyEvent, APIGatewayProxyResult> => {
   const middified = middy(handler)
     .use(jsonBodyParser())      // parses the request body when it's a JSON and converts it to an object
     .use(httpEventNormalizer()) // makes queryStringParameters and pathParameters always available

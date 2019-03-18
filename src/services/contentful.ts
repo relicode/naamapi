@@ -1,57 +1,50 @@
 import { contentful as contentfulConfig } from '@utils/config'
 import Logger from '@utils/logger'
-import { createClient } from 'contentful'
-import { Entry, Field } from 'contentful'
+import { Entry, EntryCollection, createClient } from 'contentful'
 import createError from 'http-errors'
+
+import middyfy from '../utils/middy'
+import { Omit } from '../utils/types'
 
 const { log } = new Logger('services/contentful')
 
-interface MainPageFields {
+interface MainInfoPageFields {
   content: string,
   headerImage: any
   order: number,
   title: string,
 }
 
-interface TrimmedMainPage extends MainPageFields {
+type TrimmedMainInfoPageFields = Omit<MainInfoPageFields, 'headerImage'>
+
+interface RecordFields {
   createdAt: string,
-  headerImageUrl: string,
+  headerImage: string,
   updatedAt: string,
 }
 
-interface MainPageIdMap {
-  kiltis: string,
+interface TrimmedMainInfoPageEntry extends TrimmedMainInfoPageFields, RecordFields {
+  headerImage: string,
 }
 
-const mainPageIdMap: MainPageIdMap = {
-  kiltis: '741pLXPdPs4LvlulI3xOck',
-}
+export const client = createClient(contentfulConfig)
 
-export const contentfulClient = createClient(contentfulConfig)
-
-const trimMainPage = (entry: Entry<MainPageFields>): TrimmedMainPage => {
+const trimMainInfoPageEntry = (entry: Entry<MainInfoPageFields>): TrimmedMainInfoPageEntry => {
   const { createdAt, updatedAt } = entry.sys
   const { headerImage, title, content, order } = entry.fields
-  const headerImageUrl: string = headerImage.fields.file
 
   return {
     content,
     createdAt,
-    headerImage,
-    headerImageUrl,
+    headerImage: headerImage.fields.file,
     order,
     title,
     updatedAt,
   }
 }
 
-export const fetchMainPage = async <T extends keyof MainPageIdMap>(pageName: T): Promise<TrimmedMainPage> => {
-  if (!mainPageIdMap.hasOwnProperty(pageName)) {
-    throw new createError.NotFound()
-  }
-
-  const entry: Entry<MainPageFields> = await contentfulClient.getEntry(mainPageIdMap[pageName])
-  log(`Successfully fetched page: ${entry.fields.title}`)
-  const trimmedEntry = trimMainPage(entry)
-  return trimmedEntry
+export const fetchMainInfoPages = async (): Promise<TrimmedMainInfoPageEntry[]> => {
+  const entries = await client.getEntries({ content_type: 'mainInfoPage' }) as EntryCollection<MainInfoPageFields>
+  const records = entries.items.map((entry) => trimMainInfoPageEntry(entry))
+  return records
 }

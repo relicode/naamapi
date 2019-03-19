@@ -13,7 +13,11 @@ const entriesToRecords = (entry: Entry<MainInfoPageFields>): TrimmedMainInfoPage
   return {
     content,
     createdAt,
-    headerImage: headerImage.fields.file .url,
+    headerImage: {
+      url: headerImage.fields.file.url,
+      width: headerImage.fields.file.details.image.width,
+      height: headerImage.fields.file.details.image.height,
+    },
     order,
     title,
     updatedAt,

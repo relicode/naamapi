@@ -11,7 +11,7 @@ const entriesToRecords = (entry: Entry<MainInfoPageFields>): TrimmedMainInfoPage
   const { headerImage, title, content, order } = entry.fields
 
   return {
-    content,
+    content: content.replace(/\/\/images\.ctfassets\.net/g, 'https://images.ctfassets.net'),
     createdAt,
     headerImage: {
       url: headerImage.fields.file.url,

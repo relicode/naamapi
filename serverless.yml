@@ -4,8 +4,8 @@ service:
 custom:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'eu-west-1'}
+  cacheBucket: naamapi-${self:custom.stage}-cache-bucket
 
-# Add the serverless-webpack plugin
 plugins:
   - serverless-dotenv-plugin
   - serverless-webpack
@@ -22,6 +22,14 @@ provider:
   environment:
     stage: ${self:custom.stage}
     region: ${self:custom.region}
+    cacheBucket: ${self:custom.cacheBucket}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: "arn:aws:s3:::${self:custom.cacheBucket}/*"
 
 functions:
   mainPage:
@@ -30,4 +38,24 @@ functions:
       - http:
           method: get
           path: main-pages/
+  cache:
+    handler: src/functions/cache.handler
+    events:
+      - http:
+          method: get
+          path: cache/
+      - http:
+          method: post
+          path: cache/
+
+resources:
+  Resources:
+    NewResource:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.cacheBucket}
+  Outputs:
+     NewOutput:
+       Description: "Bucket for caching"
+       Value: "Some output value"
 

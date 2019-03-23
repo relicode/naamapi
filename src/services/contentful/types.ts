@@ -1,5 +1,5 @@
 import { Omit } from '@utils/types'
-import { EntryCollection } from 'contentful';
+import { EntryCollection } from 'contentful'
 
 export interface MainInfoPageFields {
   content: string,
@@ -25,6 +25,6 @@ export interface RecordFields {
 export type TrimmedMainInfoPageEntry = TrimmedMainInfoPageFields & RecordFields
 
 export interface MainInfoPageResponse {
-  entries: TrimmedMainInfoPageEntry[],
+  mainInfoPages: TrimmedMainInfoPageEntry[],
   synced: string,
 }

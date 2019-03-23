@@ -1,4 +1,4 @@
-import { getCacheFile } from '@services/cache';
+import { getCacheFile } from '@services/cache'
 import { contentfulClient as client } from '@utils/contentful'
 import Logger from '@utils/logger'
 import { Entry, EntryCollection } from 'contentful'
@@ -28,7 +28,7 @@ const entriesToRecords = (entry: Entry<MainInfoPageFields>): TrimmedMainInfoPage
 export const fetchMainInfoPages = async (): Promise<MainInfoPageResponse> => {
   const values = await Promise.all([
     client.getEntries(
-      { content_type: 'mainInfoPage', order: 'fields.order' }
+      { content_type: 'mainInfoPage', order: 'fields.order' },
     ) as Promise<EntryCollection<TrimmedMainInfoPageEntry>>,
     getCacheFile(),
   ])
@@ -38,7 +38,7 @@ export const fetchMainInfoPages = async (): Promise<MainInfoPageResponse> => {
   const synced = values[1].time
 
   return {
-    entries: entries.items.map((entry) => entriesToRecords(entry)),
+    mainInfoPages: entries.items.map((entry) => entriesToRecords(entry)),
     synced,
   }
 }

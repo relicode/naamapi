@@ -1,7 +1,7 @@
 import { getCacheFile, setCacheFile } from '@services/cache'
 import { createErrorResponse } from '@utils/lambda'
 import middify from '@utils/middy'
-import { AWSHTTPMethod } from '@utils/types';
+import { AWSHTTPMethod } from '@utils/types'
 import { APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
 const handlePost = async (): Promise<APIGatewayProxyResult> => {
@@ -37,6 +37,9 @@ const methodHandlernMap = {
 }
 
 const cacheHandler: APIGatewayProxyHandler = async (ev) => {
+  if (process.env.CONTENTFUL_WEBHOOK_KEY !== ev.headers['Contentful-Webhook-Key']) {
+    return createErrorResponse({ message: 'Unauthorized', statusCode: 403 })
+  }
   const method = ev.httpMethod as AWSHTTPMethod
   return await methodHandlernMap[method]()
 }

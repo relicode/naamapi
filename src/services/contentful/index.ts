@@ -7,7 +7,7 @@ import { MainInfoPageFields, MainInfoPageResponse, TrimmedMainInfoPageEntry } fr
 
 const { log } = new Logger('services/contentful')
 
-const entriesToRecords = (entry: Entry<MainInfoPageFields>): TrimmedMainInfoPageEntry => {
+const mainInfoPageEntriesToRecords = (entry: Entry<MainInfoPageFields>): TrimmedMainInfoPageEntry => {
   const { createdAt, updatedAt } = entry.sys
   const { headerImage, title, content, order } = entry.fields
 
@@ -25,10 +25,10 @@ const entriesToRecords = (entry: Entry<MainInfoPageFields>): TrimmedMainInfoPage
   }
 }
 
-export const fetchMainInfoPages = async (): Promise<MainInfoPageResponse> => {
+export const fetchDynamicContent = async (contentType: string): Promise<MainInfoPageResponse> => {
   const values = await Promise.all([
     client.getEntries(
-      { content_type: 'mainInfoPage', order: 'fields.order' },
+      { content_type: contentType, order: 'fields.order' },
     ) as Promise<EntryCollection<TrimmedMainInfoPageEntry>>,
     getCacheFile(),
   ])
@@ -38,7 +38,7 @@ export const fetchMainInfoPages = async (): Promise<MainInfoPageResponse> => {
   const synced = values[1].time
 
   return {
-    mainInfoPages: entries.items.map((entry) => entriesToRecords(entry)),
+    mainInfoPages: entries.items.map((entry) => mainInfoPageEntriesToRecords(entry)),
     synced,
   }
 }

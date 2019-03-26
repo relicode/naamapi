@@ -31,7 +31,7 @@ const handleGet = async (): Promise<APIGatewayProxyResult> => {
   }
 }
 
-const methodHandlernMap = {
+const methodHandlerMap = {
   GET: handleGet,
   POST: handlePost,
 }
@@ -40,11 +40,11 @@ const cacheHandler: APIGatewayProxyHandler = async (ev) => {
   const method = ev.httpMethod as AWSHTTPMethod
   if (
     method === 'POST' &&
-    process.env.CONTENTFUL_WEBHOOK_KEY !== ev.headers['Contentful-Webhook-Key']
+    ev.headers['Contentful-Webhook-Key'] !== process.env.CONTENTFUL_WEBHOOK_KEY
   ) {
     return createErrorResponse({ message: 'Unauthorized', statusCode: 403 })
   }
-  return await methodHandlernMap[method]()
+  return await methodHandlerMap[method]()
 }
 
 export const handler = middify(cacheHandler)

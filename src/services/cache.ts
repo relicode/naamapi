@@ -1,7 +1,7 @@
 import { S3 } from '@utils/aws'
 import Logger from '@utils/logger'
 
-const { CACHE_FILE_NAME, cacheBucket } = process.env
+const { CACHE_FILE_NAME, CACHE_BUCKET } = process.env
 const { log, error } = new Logger('utils/cache')
 
 export interface CacheFileContent {
@@ -14,7 +14,7 @@ export const setCacheFile = async () => {
   try {
     const response = await S3.putObject({
       Body: body,
-      Bucket: cacheBucket,
+      Bucket: CACHE_BUCKET,
       ContentType: 'application/json',
       Key: CACHE_FILE_NAME,
     }).promise()
@@ -29,7 +29,7 @@ export const setCacheFile = async () => {
 export const getCacheFile = async (): Promise<CacheFileContent> => {
   try {
     const cacheFile = await S3.getObject({
-      Bucket: cacheBucket,
+      Bucket: CACHE_BUCKET,
       Key: CACHE_FILE_NAME,
     }).promise()
     log('Cache get successful.')

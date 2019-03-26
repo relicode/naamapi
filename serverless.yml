@@ -20,9 +20,10 @@ provider:
   vpc: ${file(./config.yml):vpc}
 
   environment:
-    stage: ${self:custom.stage}
-    region: ${self:custom.region}
-    cacheBucket: ${self:custom.cacheBucket}
+    STAGE: ${self:custom.stage}
+    REGION: ${self:custom.region}
+    CACHE_BUCKET: ${self:custom.cacheBucket}
+    CACHE_FILE_NAME: 'cache-time.json'
 
   iamRoleStatements:
     - Effect: Allow
@@ -32,12 +33,12 @@ provider:
       Resource: "arn:aws:s3:::${self:custom.cacheBucket}/*"
 
 functions:
-  mainPage:
-    handler: src/functions/content.mainInfoPages
+  dynamicContent:
+    handler: src/functions/dynamic-content.handler
     events:
       - http:
           method: get
-          path: main-pages/
+          path: dynamic-content/{contentType}/
   cache:
     handler: src/functions/cache.handler
     events:

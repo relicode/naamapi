@@ -66,5 +66,3 @@ typings/
 # dotenv environment variables file
 .env
 
-# Service configuration
-config.yml

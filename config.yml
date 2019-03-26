@@ -1,8 +1,6 @@
-# Sensitive data, do not commit to version control
-
 vpc:
   securityGroupIds:
-    - secu-group-id
+    - ${env:SECURITY_GROUP_ID}
   subnetIds:
-    - subnet-id
+    - ${env:SUBNET_ID}
 

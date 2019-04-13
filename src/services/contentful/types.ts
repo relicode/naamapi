@@ -1,11 +1,11 @@
 import { Omit } from '@utils/types'
 import { Entry, EntryCollection } from 'contentful'
 
-export const DYNAMIC_CONTENT_TYPES = ['mainInfoPage', 'performer'] as const
+export const DYNAMIC_CONTENT_TYPES = ['mainInfoPage', 'performer', 'performance'] as const
 
 export type DynamicContentTypes = typeof DYNAMIC_CONTENT_TYPES[number]
-export type DynamicContentFieldTypes = MainInfoPageFields | PerformerFields
-export type DynamicContentRecord = MainInfoPageRecord | PerformerRecord
+export type DynamicContentFieldTypes = MainInfoPageFields | PerformerFields | PerformanceFields
+export type DynamicContentRecord = MainInfoPageRecord | PerformerRecord | PerformanceRecord
 
 export type DynamicContentEntry = Entry<DynamicContentFieldTypes>
 export type DynamicContentEntryCollection = EntryCollection<DynamicContentFieldTypes>
@@ -31,16 +31,28 @@ export interface MainInfoPageFields {
 
 export interface PerformerFields {
   description: string,
-  headerImage: any,
+  headerImage?: any,
   isStar: boolean,
   name: string,
 }
 
+export interface PerformanceFields {
+  description: string,
+  headerImage: any,
+  name: string,
+  startTime: string,
+  endTime: string,
+  performers: any, // Array<Entry<PerformerFields>>,
+  location: string,
+}
+
 export type MainInfoPageRecord = Omit<MainInfoPageFields, 'headerImage'> & RecordFields
 export type PerformerRecord = Omit<PerformerFields, 'headerImage'> & RecordFields
+export type PerformanceRecord = Omit<PerformanceFields, 'headerImage'> & RecordFields
 
 export interface DynamicContentResponse {
   mainInfoPages?: MainInfoPageRecord[],
   performer?: PerformerRecord[],
+  performances?: PerformanceRecord[],
   synced: string,
 }

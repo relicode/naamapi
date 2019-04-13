@@ -1,6 +1,8 @@
 import { getCacheFile } from '@services/cache'
-import { contentfulClient as client } from '@utils/contentful'
+import { client } from '@services/contentful/client'
 import Logger from '@utils/logger'
+import { toIsoString } from '@utils/timedate'
+import { Entry } from 'contentful'
 
 import {
   DynamicContentEntryCollection,
@@ -9,6 +11,7 @@ import {
   DynamicContentTypes,
   MainInfoPageFields,
   MainInfoPageRecord,
+  PerformanceFields,
   PerformerFields,
   PerformerRecord,
 } from './types'
@@ -19,7 +22,7 @@ const replaceImageUrls = (content: string): string => (
   content.replace(/\/\/images\.ctfassets\.net/g, 'https://images.ctfassets.net')
 )
 
-const imageToRecordField = (imageEntryField) => (
+const imageToRecordField = (imageEntryField: any) => (
   imageEntryField
   ? {
     url: imageEntryField.fields.file.url,
@@ -58,6 +61,19 @@ const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection)
           name: performerFields.name,
         } as PerformerRecord
 
+      case 'performance':
+        const performanceFields = item.fields as PerformanceFields
+        return {
+          ...recordBase,
+          description: replaceImageUrls(performanceFields.description),
+          headerImage: imageToRecordField(performanceFields.headerImage),
+          name: performanceFields.name,
+          startTime: toIsoString(performanceFields.startTime),
+          endTime: toIsoString(performanceFields.endTime),
+          performers: performanceFields.performers.map((p: Entry<PerformerFields>) => p.fields.name).join(', '),
+          location: performanceFields.location,
+        }
+
       default:
         throw new Error('Invalid content type: ' + id)
     }
@@ -90,8 +106,10 @@ export const fetchDynamicContent = async (contentTypes: DynamicContentTypes[]): 
 
   log(`Successfully fetched ${contentTypes.join(', ')}`)
 
+  const keyValues = values.reduce((acc, cur) => ({ ...acc, ...cur }))
+
   return {
-    ...values,
+    ...keyValues,
     synced: cacheFile.time,
   }
 }

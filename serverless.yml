@@ -33,12 +33,23 @@ provider:
       Resource: "arn:aws:s3:::${self:custom.cacheBucket}/*"
 
 functions:
+  sandbox:
+    handler: src/functions/sandbox.handler
+    events:
+      - http:
+          method: get
+          path: sandbox
+
   dynamicContent:
     handler: src/functions/dynamic-content.handler
     events:
       - http:
           method: get
-          path: dynamic-content/{contentType}/
+          path: dynamic-content/{contentTypes}
+      - http:
+          method: get
+          path: dynamic-content/
+
   cache:
     handler: src/functions/cache.handler
     events:

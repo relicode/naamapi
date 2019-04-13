@@ -19,11 +19,14 @@ const replaceImageUrls = (content: string): string => (
   content.replace(/\/\/images\.ctfassets\.net/g, 'https://images.ctfassets.net')
 )
 
-const imageToRecordField = (imageEntryField) => ({
-  url: imageEntryField.fields.file.url,
-  width: imageEntryField.fields.file.details.image.width,
-  height: imageEntryField.fields.file.details.image.height,
-})
+const imageToRecordField = (imageEntryField) => (
+  imageEntryField
+  ? {
+    url: imageEntryField.fields.file.url,
+    width: imageEntryField.fields.file.details.image.width,
+    height: imageEntryField.fields.file.details.image.height,
+  } : null
+)
 
 const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection): DynamicContentRecord[] => {
   const { items } = entryCollection
@@ -81,12 +84,14 @@ export const fetchDynamicContent = async (contentTypes: DynamicContentTypes[]): 
     ...contentTypes.map((contentType) => getRecords(contentType)),
   ])
 
+  // This is weakness in TypeScript's Promise.all
+  // https://stackoverflow.com/questions/33684634/how-to-use-promise-all-with-typescript
   const cacheFile = await getCacheFile()
 
   log(`Successfully fetched ${contentTypes.join(', ')}`)
 
   return {
-    ...values.splice(0, 2),
+    ...values,
     synced: cacheFile.time,
   }
 }

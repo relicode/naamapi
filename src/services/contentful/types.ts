@@ -1,19 +1,19 @@
 import { Omit } from '@utils/types'
-import { EntryCollection } from 'contentful'
+import { Entry, EntryCollection } from 'contentful'
 
-export interface MainInfoPageFields {
-  content: string,
-  headerImage: any
-  order: number,
-  title: string,
-}
+export const DYNAMIC_CONTENT_TYPES = ['mainInfoPage', 'performer', 'performance'] as const
 
-export type TrimmedMainInfoPageFields = Omit<MainInfoPageFields, 'headerImage'>
+export type DynamicContentTypes = typeof DYNAMIC_CONTENT_TYPES[number]
+export type DynamicContentFieldTypes = MainInfoPageFields | PerformerFields | PerformanceFields
+export type DynamicContentRecord = MainInfoPageRecord | PerformerRecord | PerformanceRecord
+
+export type DynamicContentEntry = Entry<DynamicContentFieldTypes>
+export type DynamicContentEntryCollection = EntryCollection<DynamicContentFieldTypes>
 
 export interface HeaderImage {
+  height: number,
   url: string,
   width: number,
-  height: number,
 }
 
 export interface RecordFields {
@@ -22,9 +22,37 @@ export interface RecordFields {
   updatedAt: string,
 }
 
-export type TrimmedMainInfoPageEntry = TrimmedMainInfoPageFields & RecordFields
+export interface MainInfoPageFields {
+  content: string,
+  headerImage: any
+  order: number,
+  title: string,
+}
 
-export interface MainInfoPageResponse {
-  mainInfoPages: TrimmedMainInfoPageEntry[],
+export interface PerformerFields {
+  description: string,
+  headerImage?: any,
+  isStar: boolean,
+  name: string,
+}
+
+export interface PerformanceFields {
+  description: string,
+  headerImage: any,
+  name: string,
+  startTime: string,
+  endTime: string,
+  performers: any, // Array<Entry<PerformerFields>>,
+  location: string,
+}
+
+export type MainInfoPageRecord = Omit<MainInfoPageFields, 'headerImage'> & RecordFields
+export type PerformerRecord = Omit<PerformerFields, 'headerImage'> & RecordFields
+export type PerformanceRecord = Omit<PerformanceFields, 'headerImage'> & RecordFields
+
+export interface DynamicContentResponse {
+  mainInfoPages?: MainInfoPageRecord[],
+  performer?: PerformerRecord[],
+  performances?: PerformanceRecord[],
   synced: string,
 }

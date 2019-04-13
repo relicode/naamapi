@@ -1,44 +1,115 @@
 import { getCacheFile } from '@services/cache'
-import { contentfulClient as client } from '@utils/contentful'
+import { client } from '@services/contentful/client'
 import Logger from '@utils/logger'
-import { Entry, EntryCollection } from 'contentful'
+import { toIsoString } from '@utils/timedate'
+import { Entry } from 'contentful'
 
-import { MainInfoPageFields, MainInfoPageResponse, TrimmedMainInfoPageEntry } from './types'
+import {
+  DynamicContentEntryCollection,
+  DynamicContentRecord,
+  DynamicContentResponse,
+  DynamicContentTypes,
+  MainInfoPageFields,
+  MainInfoPageRecord,
+  PerformanceFields,
+  PerformerFields,
+  PerformerRecord,
+} from './types'
 
-const { log } = new Logger('services/contentful')
+const { error, log } = new Logger('services/contentful')
 
-const mainInfoPageEntriesToRecords = (entry: Entry<MainInfoPageFields>): TrimmedMainInfoPageEntry => {
-  const { createdAt, updatedAt } = entry.sys
-  const { headerImage, title, content, order } = entry.fields
+const replaceImageUrls = (content: string): string => (
+  content.replace(/\/\/images\.ctfassets\.net/g, 'https://images.ctfassets.net')
+)
 
-  return {
-    content: content.replace(/\/\/images\.ctfassets\.net/g, 'https://images.ctfassets.net'),
-    createdAt,
-    headerImage: {
-      url: headerImage.fields.file.url,
-      width: headerImage.fields.file.details.image.width,
-      height: headerImage.fields.file.details.image.height,
-    },
-    order,
-    title,
-    updatedAt,
-  }
+const imageToRecordField = (imageEntryField: any) => (
+  imageEntryField
+  ? {
+    url: imageEntryField.fields.file.url,
+    width: imageEntryField.fields.file.details.image.width,
+    height: imageEntryField.fields.file.details.image.height,
+  } : null
+)
+
+const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection): DynamicContentRecord[] => {
+  const { items } = entryCollection
+
+  return items.map((item) => {
+    const { createdAt, updatedAt } = item.sys
+    const recordBase = { createdAt, updatedAt }
+    const { id } = item.sys.contentType.sys
+
+    switch (id as DynamicContentTypes) {
+
+      case 'mainInfoPage':
+        const mainInfoPageFields = item.fields as MainInfoPageFields
+        return {
+          ...recordBase,
+          title: mainInfoPageFields.title,
+          content: replaceImageUrls(mainInfoPageFields.content),
+          order: mainInfoPageFields.order,
+          headerImage: imageToRecordField(mainInfoPageFields.headerImage),
+        } as MainInfoPageRecord
+
+      case 'performer':
+        const performerFields = item.fields as PerformerFields
+        return {
+          ...recordBase,
+          description: replaceImageUrls(performerFields.description),
+          headerImage: imageToRecordField(performerFields.headerImage),
+          isStar: performerFields.isStar,
+          name: performerFields.name,
+        } as PerformerRecord
+
+      case 'performance':
+        const performanceFields = item.fields as PerformanceFields
+        return {
+          ...recordBase,
+          description: replaceImageUrls(performanceFields.description),
+          headerImage: imageToRecordField(performanceFields.headerImage),
+          name: performanceFields.name,
+          startTime: toIsoString(performanceFields.startTime),
+          endTime: toIsoString(performanceFields.endTime),
+          performers: performanceFields.performers.map((p: Entry<PerformerFields>) => p.fields.name).join(', '),
+          location: performanceFields.location,
+        }
+
+      default:
+        throw new Error('Invalid content type: ' + id)
+    }
+  })
 }
 
-export const fetchDynamicContent = async (contentType: string): Promise<MainInfoPageResponse> => {
-  const values = await Promise.all([
-    client.getEntries(
-      { content_type: contentType, order: 'fields.order' },
-    ) as Promise<EntryCollection<TrimmedMainInfoPageEntry>>,
-    getCacheFile(),
-  ])
-  log('Successfully fetched MainInfoPages')
+const getRecords = async (contentType: DynamicContentTypes):
+  Promise<{ [key: string]: DynamicContentRecord[] }> => {
+    log(`Getting entries for ${contentType}`)
 
-  const entries = values[0]
-  const synced = values[1].time
+    try {
+      const entryCollection = await client.getEntries({
+        content_type: contentType,
+      }) as DynamicContentEntryCollection
+      return { [contentType]: convertEntriesToRecords(entryCollection) }
+    } catch (e) {
+      error(`Error fetching ${contentType}`)
+      error(e)
+    }
+}
+
+export const fetchDynamicContent = async (contentTypes: DynamicContentTypes[]): Promise<DynamicContentResponse> => {
+  const values = await Promise.all([
+    ...contentTypes.map((contentType) => getRecords(contentType)),
+  ])
+
+  // This is weakness in TypeScript's Promise.all
+  // https://stackoverflow.com/questions/33684634/how-to-use-promise-all-with-typescript
+  const cacheFile = await getCacheFile()
+
+  log(`Successfully fetched ${contentTypes.join(', ')}`)
+
+  const keyValues = values.reduce((acc, cur) => ({ ...acc, ...cur }))
 
   return {
-    mainInfoPages: entries.items.map((entry) => mainInfoPageEntriesToRecords(entry)),
-    synced,
+    ...keyValues,
+    synced: cacheFile.time,
   }
 }

@@ -9,7 +9,7 @@ const dynamicContentHandler: APIGatewayProxyHandler = async (ev) => {
   try {
     const contentTypes = (
       typeof ev.pathParameters.contentTypes === 'string'
-      ? ev.pathParameters.contentTypes.split('%2C')
+      ? ev.pathParameters.contentTypes.split(',')
       : DYNAMIC_CONTENT_TYPES
     )
     const page = await fetchDynamicContent(contentTypes as DynamicContentTypes[])

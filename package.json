@@ -8,7 +8,7 @@
   "scripts": {
     "lint": "tslint src/**/*.ts{,x}",
     "lint:fix": "tslint --fix src/**/*.ts{,x}",
-    "test": "jest ./tests"
+    "test": "jest --silent ./tests"
   },
   "dependencies": {
     "aws-sdk": "^2.409.0",

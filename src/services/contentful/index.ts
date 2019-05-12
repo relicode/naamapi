@@ -5,6 +5,7 @@ import { toIsoString } from '@utils/timedate'
 import { Entry } from 'contentful'
 
 import {
+  DYNAMIC_CONTENT_TYPES_PLURAL_MAP,
   DynamicContentEntryCollection,
   DynamicContentRecord,
   DynamicContentResponse,
@@ -88,7 +89,7 @@ const getRecords = async (contentType: DynamicContentTypes):
       const entryCollection = await client.getEntries({
         content_type: contentType,
       }) as DynamicContentEntryCollection
-      return { [contentType]: convertEntriesToRecords(entryCollection) }
+      return { [DYNAMIC_CONTENT_TYPES_PLURAL_MAP[contentType]]: convertEntriesToRecords(entryCollection) }
     } catch (e) {
       error(`Error fetching ${contentType}`)
       error(e)

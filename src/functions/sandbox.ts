@@ -1,6 +1,7 @@
+import { APIGatewayProxyHandler } from 'aws-lambda'
+
 import { createErrorResponse } from '@utils/errors'
 import middify from '@utils/middy'
-import { APIGatewayProxyHandler } from 'aws-lambda'
 
 const { STAGE } = process.env
 

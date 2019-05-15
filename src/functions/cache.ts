@@ -1,8 +1,9 @@
+import { APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
+
 import { getCacheFile, setCacheFile } from '@services/cache'
 import { createErrorResponse } from '@utils/errors'
 import middify from '@utils/middy'
 import { AWSHTTPMethod } from '@utils/types'
-import { APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda'
 
 const handlePost = async (): Promise<APIGatewayProxyResult> => {
   try {

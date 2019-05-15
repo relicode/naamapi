@@ -1,5 +1,6 @@
-import { Omit } from '@utils/types'
 import { Entry, EntryCollection } from 'contentful'
+
+import { Omit } from '@utils/types'
 
 export const DYNAMIC_CONTENT_TYPES = ['mainInfoPage', 'performer', 'performance'] as const
 export const DYNAMIC_CONTENT_TYPES_PLURAL_MAP = DYNAMIC_CONTENT_TYPES

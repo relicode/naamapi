@@ -1,9 +1,9 @@
+import { APIGatewayProxyHandler } from 'aws-lambda'
+
 import { fetchDynamicContent } from '@services/contentful'
-import { DynamicContentTypes } from '@services/contentful/types'
-import { DYNAMIC_CONTENT_TYPES } from '@services/contentful/types'
+import { DYNAMIC_CONTENT_TYPES, DynamicContentTypes } from '@services/contentful/types'
 import { createErrorResponse } from '@utils/errors'
 import middify from '@utils/middy'
-import { APIGatewayProxyHandler } from 'aws-lambda'
 
 const dynamicContentHandler: APIGatewayProxyHandler = async (ev) => {
   try {

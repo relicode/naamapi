@@ -1,8 +1,9 @@
+import { Entry } from 'contentful'
+
 import { getCacheFile } from '@services/cache'
 import { client } from '@services/contentful/client'
 import Logger from '@utils/logger'
 import { toIsoString } from '@utils/timedate'
-import { Entry } from 'contentful'
 
 import {
   DYNAMIC_CONTENT_TYPES_PLURAL_MAP,

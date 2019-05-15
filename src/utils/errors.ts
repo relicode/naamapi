@@ -1,6 +1,4 @@
-import {
-  APIGatewayProxyResult,
-} from 'aws-lambda'
+import { APIGatewayProxyResult } from 'aws-lambda'
 
 interface LambdaError {
   message: string,

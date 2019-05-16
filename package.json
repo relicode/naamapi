@@ -1,6 +1,6 @@
 {
   "name": "naamapi",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Serverless API for the Naamat festival application",
   "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
   "license": "MIT",

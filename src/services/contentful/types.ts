@@ -56,6 +56,8 @@ export type PerformanceRecord = Omit<PerformanceFields, 'headerImage'> & RecordF
 export interface DynamicContentResponse {
   mainInfoPages?: MainInfoPageRecord[],
   performer?: PerformerRecord[],
-  performances?: PerformanceRecord[],
+  performances?: {
+    [key: string]: PerformanceRecord[],
+  }
   synced: string,
 }

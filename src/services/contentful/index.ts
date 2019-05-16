@@ -14,6 +14,7 @@ import {
   MainInfoPageFields,
   MainInfoPageRecord,
   PerformanceFields,
+  PerformanceRecord,
   PerformerFields,
   PerformerRecord,
 } from './types'
@@ -74,13 +75,24 @@ const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection)
           endTime: toIsoString(performanceFields.endTime),
           performers: performanceFields.performers.map((p: Entry<PerformerFields>) => p.fields.name).join(', '),
           location: performanceFields.location,
-        }
+        } as PerformanceRecord
 
       default:
         throw new Error('Invalid content type: ' + id)
     }
   })
 }
+
+const sortPerformancesByTime = (records: PerformanceRecord[]): PerformanceRecord[] => (
+  records.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+)
+
+const sortPerformancesByLocation = (records: PerformanceRecord[]): { [key: string]: PerformanceRecord[] } => (
+  records.reduce((acc, cur) => ({
+    ...acc,
+    [cur.location]: acc[cur.location] ? [...acc[cur.location], cur] : [{ ...cur }],
+  }), {})
+)
 
 const getRecords = async (contentType: DynamicContentTypes):
   Promise<{ [key: string]: DynamicContentRecord[] }> => {
@@ -109,9 +121,9 @@ export const fetchDynamicContent = async (contentTypes: DynamicContentTypes[]): 
   log(`Successfully fetched ${contentTypes.join(', ')}`)
 
   const keyValues = values.reduce((acc, cur) => ({ ...acc, ...cur }))
+  const performances = keyValues.performances
+    ? sortPerformancesByLocation(sortPerformancesByTime(keyValues.performances as PerformanceRecord[]))
+    : {}
 
-  return {
-    ...keyValues,
-    synced: cacheFile.time,
-  }
+  return { ...{ ...keyValues, performances }, synced: cacheFile.time }
 }

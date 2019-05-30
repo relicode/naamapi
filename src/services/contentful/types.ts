@@ -21,13 +21,13 @@ export interface HeaderImage {
 
 export interface RecordFields {
   createdAt: string,
-  headerImage: HeaderImage,
+  headerImage?: HeaderImage,
   updatedAt: string,
 }
 
 export interface MainInfoPageFields {
   content: string,
-  headerImage: any
+  headerImage?: any
   order: number,
   title: string,
 }
@@ -40,12 +40,12 @@ export interface PerformerFields {
 }
 
 export interface PerformanceFields {
-  description: string,
-  headerImage: any,
+  description?: string,
+  headerImage?: any,
   name: string,
   startTime: string,
   endTime: string,
-  performers: any, // Array<Entry<PerformerFields>>,
+  performers?: any, // Array<Entry<PerformerFields>>,
   location: string,
 }
 

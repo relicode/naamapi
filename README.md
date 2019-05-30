@@ -3,7 +3,8 @@ Serverless API for the Naamat festival application
 
 ## Requirements
 
-Requires global `serverless` package and AWS credentials (default profile: naamapi-admin)
+Requires global `serverless` package and AWS credentials (default profile: naamapi-admin).
+Install [`jq`](https://stedolan.github.io/jq/) if you want to use commands like `yarn list:performers`.
 
 ## Installation
 Run `yarn` to install dependencies.
@@ -20,4 +21,3 @@ In .env file, set the following environment variables:
 
 ## Deploy
 `sls deploy -s {stage}`
-

@@ -3,7 +3,6 @@ import { Entry } from 'contentful'
 import { getCacheFile } from '@services/cache'
 import { client } from '@services/contentful/client'
 import Logger from '@utils/logger'
-import { toIsoString } from '@utils/timedate'
 
 import {
   DYNAMIC_CONTENT_TYPES_PLURAL_MAP,
@@ -71,8 +70,8 @@ const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection)
           description: replaceImageUrls(performanceFields.description),
           headerImage: imageToRecordField(performanceFields.headerImage),
           name: performanceFields.name,
-          startTime: toIsoString(performanceFields.startTime),
-          endTime: toIsoString(performanceFields.endTime),
+          startTime: new Date(performanceFields.startTime).toISOString(),
+          endTime: new Date(performanceFields.endTime).toISOString(),
           performers: performanceFields.performers.map((p: Entry<PerformerFields>) => p.fields.name).join(', '),
           location: performanceFields.location,
         } as PerformanceRecord

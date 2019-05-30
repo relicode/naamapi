@@ -6,6 +6,9 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
+    "list:mainInfoPages": "dotenv -- node utils/entries-by-content-type.js --ctype mainInfoPage | jq",
+    "list:performers": "dotenv -- node utils/entries-by-content-type.js --ctype performer | jq",
+    "list:performances": "dotenv -- node utils/entries-by-content-type.js --ctype performance | jq",
     "lint": "tslint src/**/*.ts{,x}",
     "lint:fix": "tslint --fix src/**/*.ts{,x}",
     "test": "jest --silent ./tests"
@@ -13,8 +16,9 @@
   "dependencies": {
     "aws-sdk": "^2.409.0",
     "contentful": "^7.3.0",
+    "dotenv-cli": "^2.0.0",
     "middy": "^0.22.1",
-    "moment": "^2.24.0"
+    "yargs": "^13.2.4"
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.1",

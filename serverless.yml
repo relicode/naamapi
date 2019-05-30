@@ -4,7 +4,7 @@ service:
 custom:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'eu-west-1'}
-  cacheBucket: naamapi-${self:custom.stage}-cache-bucket
+  assetsBucket: naamapi-${self:custom.stage}-assets
 
 plugins:
   - serverless-dotenv-plugin
@@ -22,7 +22,7 @@ provider:
   environment:
     STAGE: ${self:custom.stage}
     REGION: ${self:custom.region}
-    CACHE_BUCKET: ${self:custom.cacheBucket}
+    ASSETS_BUCKET: ${self:custom.assetsBucket}
     CACHE_FILE_NAME: 'cache-time.json'
 
   iamRoleStatements:
@@ -30,7 +30,7 @@ provider:
       Action:
         - s3:PutObject
         - s3:GetObject
-      Resource: "arn:aws:s3:::${self:custom.cacheBucket}/*"
+      Resource: "arn:aws:s3:::${self:custom.assetsBucket}/*"
 
 functions:
   sandbox:
@@ -65,7 +65,7 @@ resources:
     NewResource:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${self:custom.cacheBucket}
+        BucketName: ${self:custom.assetsBucket}
   Outputs:
      NewOutput:
        Description: "Bucket for caching"

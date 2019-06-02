@@ -19,4 +19,3 @@ export const validateTimeString = (date: string | string[]): boolean => {
   }
   return true
 }
-

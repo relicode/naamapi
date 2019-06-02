@@ -86,13 +86,6 @@ const sortPerformancesByTime = (records: PerformanceRecord[]): PerformanceRecord
   records.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
 )
 
-const sortPerformancesByLocation = (records: PerformanceRecord[]): { [key: string]: PerformanceRecord[] } => (
-  records.reduce((acc, cur) => ({
-    ...acc,
-    [cur.location]: acc[cur.location] ? [...acc[cur.location], cur] : [{ ...cur }],
-  }), {})
-)
-
 const getRecords = async (contentType: DynamicContentTypes):
   Promise<{ [key: string]: DynamicContentRecord[] }> => {
     log(`Getting entries for ${contentType}`)
@@ -120,9 +113,7 @@ export const fetchDynamicContent = async (contentTypes: DynamicContentTypes[]): 
   log(`Successfully fetched ${contentTypes.join(', ')}`)
 
   const keyValues = values.reduce((acc, cur) => ({ ...acc, ...cur }))
-  const performances = keyValues.performances
-    ? sortPerformancesByLocation(sortPerformancesByTime(keyValues.performances as PerformanceRecord[]))
-    : {}
+  keyValues.performances = sortPerformancesByTime(keyValues.performances as PerformanceRecord[])
 
-  return { ...{ ...keyValues, performances }, synced: cacheFile.time }
+  return { ...{ ...keyValues }, synced: cacheFile.time }
 }

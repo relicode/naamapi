@@ -33,12 +33,18 @@ const imageToRecordField = (imageEntryField: any) => (
   } : null
 )
 
+interface RecordBase {
+  createdAt: string,
+  updatedAt: string,
+  id: string,
+}
+
 const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection): DynamicContentRecord[] => {
   const { items } = entryCollection
 
   return items.map((item) => {
     const { createdAt, updatedAt } = item.sys
-    const recordBase = { createdAt, updatedAt }
+    const recordBase: RecordBase = { createdAt, updatedAt, id: item.sys.id }
     const { id } = item.sys.contentType.sys
 
     switch (id as DynamicContentTypes) {

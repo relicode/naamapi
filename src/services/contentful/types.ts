@@ -3,8 +3,11 @@ import { Entry, EntryCollection } from 'contentful'
 import { Omit } from '@utils/types'
 
 export const DYNAMIC_CONTENT_TYPES = ['mainInfoPage', 'performer', 'performance'] as const
-export const DYNAMIC_CONTENT_TYPES_PLURAL_MAP = DYNAMIC_CONTENT_TYPES
-  .reduce((acc, cur) => ({ ...acc, ...{ [cur]: `${cur}s` } }), {}) as { [key in DynamicContentTypes]: string }
+export const DYNAMIC_CONTENT_TYPES_PLURAL_MAP = {
+  mainInfoPage: 'mainInfoScreens',
+  performer: 'performers',
+  performance: 'performances',
+} as { [key in DynamicContentTypes]: string }
 
 export type DynamicContentTypes = typeof DYNAMIC_CONTENT_TYPES[number]
 export type DynamicContentFieldTypes = MainInfoPageFields | PerformerFields | PerformanceFields
@@ -42,7 +45,7 @@ export interface PerformerFields {
 export interface PerformanceFields {
   description?: string,
   headerImage?: any,
-  name: string,
+  name?: string,
   startTime: string,
   endTime: string,
   performers?: any, // Array<Entry<PerformerFields>>,
@@ -54,8 +57,8 @@ export type PerformerRecord = Omit<PerformerFields, 'headerImage'> & RecordField
 export type PerformanceRecord = Omit<PerformanceFields, 'headerImage'> & RecordFields
 
 export interface DynamicContentResponse {
-  mainInfoPages?: MainInfoPageRecord[],
-  performer?: PerformerRecord[],
+  mainInfoScreens?: MainInfoPageRecord[],
+  performers?: PerformerRecord[],
   performances?: PerformanceRecord[],
   synced: string,
 }

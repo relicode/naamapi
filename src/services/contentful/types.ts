@@ -45,7 +45,7 @@ export interface PerformerFields {
 export interface PerformanceFields {
   description?: string,
   headerImage?: any,
-  name: string,
+  name?: string,
   startTime: string,
   endTime: string,
   performers?: any, // Array<Entry<PerformerFields>>,

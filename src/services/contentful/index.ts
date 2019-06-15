@@ -3,7 +3,6 @@ import { Entry } from 'contentful'
 import { getCacheFile } from '@services/cache'
 import { client } from '@services/contentful/client'
 import Logger from '@utils/logger'
-import { toIsoString } from '@utils/timedate'
 
 import {
   DYNAMIC_CONTENT_TYPES_PLURAL_MAP,
@@ -34,12 +33,18 @@ const imageToRecordField = (imageEntryField: any) => (
   } : null
 )
 
+interface RecordBase {
+  createdAt: string,
+  updatedAt: string,
+  id: string,
+}
+
 const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection): DynamicContentRecord[] => {
   const { items } = entryCollection
 
   return items.map((item) => {
     const { createdAt, updatedAt } = item.sys
-    const recordBase = { createdAt, updatedAt }
+    const recordBase: RecordBase = { createdAt, updatedAt, id: item.sys.id }
     const { id } = item.sys.contentType.sys
 
     switch (id as DynamicContentTypes) {
@@ -71,8 +76,8 @@ const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection)
           description: replaceImageUrls(performanceFields.description),
           headerImage: imageToRecordField(performanceFields.headerImage),
           name: performanceFields.name,
-          startTime: toIsoString(performanceFields.startTime),
-          endTime: toIsoString(performanceFields.endTime),
+          startTime: new Date(performanceFields.startTime).toISOString(),
+          endTime: new Date(performanceFields.endTime).toISOString(),
           performers: performanceFields.performers.map((p: Entry<PerformerFields>) => p.fields.name).join(', '),
           location: performanceFields.location,
         } as PerformanceRecord
@@ -85,13 +90,6 @@ const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection)
 
 const sortPerformancesByTime = (records: PerformanceRecord[]): PerformanceRecord[] => (
   records.sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
-)
-
-const sortPerformancesByLocation = (records: PerformanceRecord[]): { [key: string]: PerformanceRecord[] } => (
-  records.reduce((acc, cur) => ({
-    ...acc,
-    [cur.location]: acc[cur.location] ? [...acc[cur.location], cur] : [{ ...cur }],
-  }), {})
 )
 
 const getRecords = async (contentType: DynamicContentTypes):
@@ -121,9 +119,7 @@ export const fetchDynamicContent = async (contentTypes: DynamicContentTypes[]): 
   log(`Successfully fetched ${contentTypes.join(', ')}`)
 
   const keyValues = values.reduce((acc, cur) => ({ ...acc, ...cur }))
-  const performances = keyValues.performances
-    ? sortPerformancesByLocation(sortPerformancesByTime(keyValues.performances as PerformanceRecord[]))
-    : {}
+  keyValues.performances = sortPerformancesByTime(keyValues.performances as PerformanceRecord[])
 
-  return { ...{ ...keyValues, performances }, synced: cacheFile.time }
+  return { ...{ ...keyValues }, synced: cacheFile.time }
 }

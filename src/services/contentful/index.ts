@@ -20,7 +20,7 @@ import {
 
 const { error, log } = new Logger('services/contentful')
 
-const replaceImageUrls = (content: string): string => (
+const replaceImageUrls = (content: string = ''): string => (
   content.replace(/\/\/images\.ctfassets\.net/g, 'https://images.ctfassets.net')
 )
 
@@ -71,14 +71,19 @@ const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection)
 
       case 'performance':
         const performanceFields = item.fields as PerformanceFields
+        const performerNames = performanceFields.performers.map((p: Entry<PerformerFields>) => p.fields.name).join(', ')
+        const performerDescriptions = replaceImageUrls(
+          performanceFields.performers
+            .map((p: Entry<PerformerFields>) => p.fields.description).join('\n'),
+        )
         return {
           ...recordBase,
-          description: replaceImageUrls(performanceFields.description),
+          description: replaceImageUrls(performanceFields.description) + performerDescriptions,
           headerImage: imageToRecordField(performanceFields.headerImage),
-          name: performanceFields.name,
+          name: performanceFields.name || performerNames,
           startTime: new Date(performanceFields.startTime).toISOString(),
           endTime: new Date(performanceFields.endTime).toISOString(),
-          performers: performanceFields.performers.map((p: Entry<PerformerFields>) => p.fields.name).join(', '),
+          performers: performerNames,
           location: performanceFields.location,
         } as PerformanceRecord
 

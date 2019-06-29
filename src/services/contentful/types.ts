@@ -26,6 +26,7 @@ export interface RecordFields {
   createdAt: string,
   headerImage?: HeaderImage,
   updatedAt: string,
+  id: string,
 }
 
 export interface MainInfoPageFields {

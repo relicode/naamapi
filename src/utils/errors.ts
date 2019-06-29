@@ -7,5 +7,5 @@ interface LambdaError {
 
 export const createErrorResponse = (error: LambdaError): APIGatewayProxyResult => ({
   body: JSON.stringify({ message: error.message }),
-  statusCode: error.statusCode,
+  statusCode: error.statusCode || 500,
 })

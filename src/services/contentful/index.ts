@@ -39,6 +39,16 @@ interface RecordBase {
   id: string,
 }
 
+const getPerformerName = (performerFields: PerformerFields): string => {
+  try {
+    return performerFields.name
+  } catch (e) {
+    error('Performer name not found.')
+    error(e)
+    return 'Mysteeriesiintyjä'
+  }
+}
+
 const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection): DynamicContentRecord[] => {
   const { items } = entryCollection
 
@@ -66,12 +76,14 @@ const convertEntriesToRecords = (entryCollection: DynamicContentEntryCollection)
           description: replaceImageUrls(performerFields.description),
           headerImage: imageToRecordField(performerFields.headerImage),
           isStar: performerFields.isStar,
-          name: performerFields.name,
+          name: getPerformerName(performerFields),
         } as PerformerRecord
 
       case 'performance':
         const performanceFields = item.fields as PerformanceFields
-        const performerNames = performanceFields.performers.map((p: Entry<PerformerFields>) => p.fields.name).join(', ')
+        const performerNames = performanceFields.performers.map((p: Entry<PerformerFields>) => (
+          getPerformerName(p.fields)
+        )).join(', ')
         const performerDescriptions = replaceImageUrls(
           performanceFields.performers
             .map((p: Entry<PerformerFields>) => p.fields.description).join('\n'),

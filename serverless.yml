@@ -23,6 +23,7 @@ provider:
     STAGE: ${self:custom.stage}
     REGION: ${self:custom.region}
     ASSETS_BUCKET: ${self:custom.assetsBucket}
+    ONESIGNAL_S3_FILENAME: 'notifications.json'
     CACHE_FILE_NAME: 'cache-time.json'
 
   iamRoleStatements:
@@ -59,6 +60,18 @@ functions:
       - http:
           method: post # Sets the cache, used by Contentful
           path: cache/
+
+  notifications:
+    handler: src/functions/notifications.handler
+    events:
+      - http:
+          method: get
+          path: notifications/
+
+  scheduledNotifications:
+    handler: src/functions/notifications.scheduleHandler
+    events:
+      - schedule: rate(15 minutes)
 
 resources:
   Resources:

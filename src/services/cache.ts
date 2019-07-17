@@ -2,7 +2,7 @@ import { S3 } from '@utils/aws'
 import Logger from '@utils/logger'
 
 const { CACHE_FILE_NAME, ASSETS_BUCKET } = process.env
-const { log, error } = new Logger('utils/cache')
+const { log, error } = new Logger('services/cache')
 
 export interface CacheFileContent {
   time: string,

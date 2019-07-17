@@ -15,6 +15,8 @@ In .env file, set the following environment variables:
   - `CONTENTFUL_SPACE_ID` SpaceId for Contentful Space
   - `SECURITY_GROUP_ID` AWS VPC Security group id
   - `SUBNET_ID` AWS VPC Subnet id
+  - `ONESIGNAL_APP_ID` AppId from Onesignal
+  - `ONESIGNAL_REST_API_KEY` Private REST API key from Onesignal
 
 ## Run development server
 `sls offline`
